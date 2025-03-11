@@ -3,50 +3,358 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login Page</title>
+  <title>Anxt Ai- Ultimate</title>
+
+  <!-- FontAwesome & Tailwind -->
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
   <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@400;700&display=swap" rel="stylesheet">
+
   <style>
     body {
-      font-family: 'Arial', sans-serif;
+      font-family: 'El Messiri', sans-serif;
       background: black;
       color: white;
+      min-height: 100vh;
       display: flex;
-      justify-content: center;
+      flex-direction: column;
       align-items: center;
-      height: 100vh;
-      margin: 0;
+      justify-content: center;
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
     }
+
     .glass-container {
       background: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(10px);
+      backdrop-filter: blur(14px);
       border-radius: 12px;
       padding: 20px;
       box-shadow: 0 4px 15px rgba(255, 255, 255, 0.3);
-      width: 300px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      width: 90%;
+      max-width: 400px;
       text-align: center;
     }
-    .login-button {
+
+    .glass-container:hover {
+      transform: scale(1.05);
+    }
+
+    .highlight {
+      color: #ffcc00;
+      font-weight: bold;
+    }
+
+    .pending {
+      color: #ff9800;
+      font-weight: bold;
+    }
+
+    .big {
+      color: #28a745;
+      font-weight: bold;
+    }
+
+    .small {
+      color: #dc3545;
+      font-weight: bold;
+    }
+
+    .period-box {
       background: linear-gradient(135deg, #ff9800, #ff5722);
+      padding: 10px 15px;
+      border-radius: 10px;
+      display: inline-block;
+      font-size: 1.2rem;
+      font-weight: bold;
+      text-shadow: 0 0 10px rgba(255, 87, 34, 0.8);
+    }
+
+    .animate-fade-in {
+      animation: fadeIn 0.5s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Hacker Animation Background */
+    .hacker-background {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      z-index: -1;
+      background: black;
+    }
+
+    .hacker-column {
+      position: absolute;
+      top: -100%;
+      width: 20px;
+      height: 100%;
+      color: lime;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 18px;
+      text-shadow: 0 0 5px lime;
+      writing-mode: vertical-rl;
+      text-orientation: upright;
+      white-space: nowrap;
+      animation: fall linear infinite;
+    }
+
+    @keyframes fall {
+      to {
+        top: 100%;
+      opacity: 0;
+      transform: scale(1.5);
+      filter: blur(2px);
+      }
+    }
+
+    /* History Item Styling */
+    .history-item {
       padding: 10px;
-      border-radius: 8px;
-      cursor: pointer;
-      margin-top: 20px;
+      margin: 5px 0;
+      border-radius: 5px;
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .history-item.win {
+      background: rgba(40, 167, 69, 0.2);
+    }
+
+    .history-item.loss {
+      background: rgba(220, 53, 69, 0.2);
     }
   </style>
 </head>
 <body>
+
+  <!-- Hacker Animation Background -->
+  <div class="hacker-background"></div>
+
+  <!-- Header -->
+  <header class="w-full text-center py-6">
+    <h1 class="text-3xl font-bold highlight">
+      <i class="fas fa-chart-line"></i> TEAM EARNING<span class="text-red-500">AI</span>
+    </h1>
+  </header>
+
+  <!-- Period & Timer -->
   <div class="glass-container">
-    <h1 class="text-2xl font-bold">LOGIN</h1>
-    <p class="mt-4">USER</p>
-    <div class="login-button" onclick="login()">TAP TO LOGIN</div>
+    <h2 class="text-lg font-semibold">
+      <i class="fas fa-clock text-blue-400"></i> Current Period:
+    </h2>
+    <p id="period" class="period-box">Loading...</p>
+    <p class="text-xl mt-2">
+      <i class="fas fa-hourglass-half text-yellow-400"></i>
+      <span id="timer">00:00</span>
+    </p>
+  </div>
+
+  <!-- Current Prediction -->
+  <div class="glass-container mt-4">
+    <h2 class="text-lg font-semibold">
+      <i class="fas fa-magic text-purple-400"></i> Prediction:
+    </h2>
+    <p id="prediction" class="pending text-lg">Pending...</p>
+    <p id="chance" class="text-gray-400 text-sm">Chance: --%</p>
+  </div>
+
+  <!-- Stats -->
+  <div class="glass-container mt-4">
+    <h2 class="text-lg font-semibold">
+      <i class="fas fa-chart-bar"></i> Stats:
+    </h2>
+    <p>Total Bets: <span id="totalBets">0</span></p>
+    <p>Total Wins: <span id="totalWins">0</span></p>
+    <p>Total Losses: <span id="totalLosses">0</span></p>
+    <p>Accuracy: <span id="accuracy">0%</span></p>
+  </div>
+
+  <!-- Prediction History -->
+  <div class="glass-container mt-4">
+    <h2 class="text-lg font-semibold">
+      <i class="fas fa-history"></i> Last Predictions:
+    </h2>
+    <ul id="historyList" class="text-gray-300 mt-2 space-y-2"></ul>
   </div>
 
   <script>
-    function login() {
-      // Redirect to the next page after login
-      window.location.href = "https://zain-randi-default-rtdb.firebaseio.com/";
+    // Check Internet Connection
+    function checkInternet() {
+      if (!navigator.onLine) {
+        history.back(); // Auto go back if offline
+      }
     }
+
+    // Check on Load & When Connection Changes
+    window.addEventListener("load", checkInternet);
+    window.addEventListener("offline", checkInternet);
+
+    // Generate Hacker Animation
+    function createHackerAnimation() {
+      const hackerBackground = document.querySelector(".hacker-background");
+      const columns = Math.floor(window.innerWidth / 20);
+
+      for (let i = 0; i < columns; i++) {
+        const column = document.createElement("div");
+        column.className = "hacker-column";
+        column.style.left = `${i * 20}px`;
+        column.style.animationDuration = `${Math.random() * 5 + 5}s`;
+        column.style.animationDelay = `${Math.random() * 5}s`;
+        column.textContent = generateRandomCode();
+        hackerBackground.appendChild(column);
+      }
+    }
+
+    // Generate Random Code for Hacker Effect
+    function generateRandomCode() {
+      const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+      let code = "";
+      for (let i = 0; i < 50; i++) {
+        code += characters[Math.floor(Math.random() * characters.length)];
+      }
+      return code;
+    }
+
+    // Initialize Hacker Animation
+    createHackerAnimation();
+
+    // Game Logic
+    let historyData = [];
+    let lastFetchedPeriod = null;
+
+    // Function to fetch game result
+    async function fetchGameResult() {
+      try {
+        const payload = {
+          pageSize: 10,
+          pageNo: 1,
+          typeId: 1,
+          language: 0,
+          random: "4a0522c6ecd8410496260e686be2a57c",
+          signature: "334B5E70A0C9B8918B0B15E517E2069C",
+          timestamp: Math.floor(Date.now() / 1000)
+        };
+
+        let response = await fetch("https://api.bdg88zf.com/api/webapi/GetNoaverageEmerdList", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+
+        let data = await response.json();
+        let latestResult = data?.data?.list?.[0];
+
+        if (latestResult) {
+          return { period: latestResult.issueNumber, result: latestResult.number };
+        } else {
+          throw new Error("No data found in the API response");
+        }
+      } catch (error) {
+        console.error("Error fetching game result:", error);
+        return null;
+      }
+    }
+
+    // Algorithm for prediction
+    function trendAnalysis(history) {
+      let bigCount = history.filter(item => item.result >= 5).length;
+      let smallCount = history.filter(item => item.result < 5).length;
+      return bigCount > smallCount ? "BIG" : "SMALL";
+    }
+
+    // Auto-predict function
+    function autoPredict() {
+      return { type: trendAnalysis(historyData) };
+    }
+
+    // Function to update prediction
+    async function updatePrediction() {
+      let apiResult = await fetchGameResult();
+
+      if (apiResult && apiResult.period !== lastFetchedPeriod) {
+        lastFetchedPeriod = apiResult.period;
+        let currentPeriod = (BigInt(apiResult.period) + 1n).toString();
+
+        let prediction = autoPredict();
+
+        document.getElementById("period").textContent = currentPeriod;
+        document.getElementById("prediction").textContent = prediction.type;
+        document.getElementById("prediction").className = prediction.type === "BIG" ? "big text-lg" : "small text-lg";
+
+        historyData.unshift({ period: currentPeriod, prediction: prediction.type, resultStatus: "Pending" });
+        updateHistory();
+        checkWinLoss(apiResult);
+      }
+    }
+
+    // Function to check win/loss
+    function checkWinLoss(apiResult) {
+      historyData.forEach(item => {
+        if (item.period === apiResult.period) {
+          let actualResult = apiResult.result >= 5 ? "BIG" : "SMALL";
+          item.resultStatus = item.prediction === actualResult ? "WIN" : "LOSS";
+        }
+      });
+
+      updateStats();
+      updateHistory();
+    }
+
+    // Function to update stats
+    function updateStats() {
+      document.getElementById("totalBets").textContent = historyData.length;
+      document.getElementById("totalWins").textContent = historyData.filter(item => item.resultStatus === "WIN").length;
+      document.getElementById("totalLosses").textContent = historyData.filter(item => item.resultStatus === "LOSS").length;
+
+      let accuracy = ((historyData.filter(item => item.resultStatus === "WIN").length / historyData.length) * 100).toFixed(2) || 0;
+      document.getElementById("accuracy").textContent = accuracy + "%";
+    }
+
+    // Function to update history
+    function updateHistory() {
+      let historyList = document.getElementById("historyList");
+      historyList.innerHTML = historyData.map(item =>
+        `<li class="history-item ${item.resultStatus.toLowerCase()}">
+          <strong>Period:</strong> ${item.period} - <strong>Prediction:</strong> ➢ ${item.prediction} (${item.resultStatus})
+        </li>`
+      ).join("");
+    }
+
+    // 1-Minute Period and Timer
+    function startTimer() {
+      setInterval(() => {
+        const now = new Date();
+        const seconds = now.getUTCSeconds();
+        const remainingSeconds = 60 - seconds;
+        const minutes = now.getUTCMinutes();
+        const totalMinutes = now.getUTCHours() * 60 + minutes;
+
+        // Update period number
+        const periodNumber = `${now.getUTCFullYear()}${(now.getUTCMonth() + 1).toString().padStart(2, '0')}${now.getUTCDate().toString().padStart(2, '0')}1000${(10001 + totalMinutes)}`;
+        document.getElementById("period").textContent = periodNumber;
+
+        // Update timer
+        const formattedTime = `00:${remainingSeconds.toString().padStart(2, '0')}`;
+        document.getElementById("timer").textContent = formattedTime;
+      }, 1000); // Update every second
+    }
+
+    // Start the timer
+    startTimer();
+
+    // Fetch new result every 30 seconds
+    setInterval(updatePrediction, 30000);
   </script>
 </body>
 </html>
