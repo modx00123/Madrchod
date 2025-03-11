@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login Page</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background: black;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .glass-container {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 15px rgba(255, 255, 255, 0.3);
+      width: 300px;
+      text-align: center;
+    }
+    .login-button {
+      background: linear-gradient(135deg, #ff9800, #ff5722);
+      padding: 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="glass-container">
+    <h1 class="text-2xl font-bold">LOGIN</h1>
+    <p class="mt-4">USER</p>
+    <div class="login-button" onclick="login()">TAP TO LOGIN</div>
+  </div>
+
+  <script>
+    function login() {
+      // Redirect to the next page after login
+      window.location.href = "https://zain-randi-default-rtdb.firebaseio.com/";
+    }
+  </script>
+</body>
+</html>
